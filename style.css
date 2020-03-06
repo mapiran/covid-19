@@ -1,0 +1,5 @@
+/* override leaflet style */
+.leaflet-container {
+	background: #333333;
+	outline: 0;
+}
