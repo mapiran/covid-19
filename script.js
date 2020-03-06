@@ -1,17 +1,4 @@
-class Province {
-    constructor(name, coor, conf, reco, died) {
-      this.name = name;
-      this.coordinates = coor;
-      this.confirmed = conf; 
-      this.recovered = reco; 
-      this.died = died;
-      this.fighting = conf - reco - died; 
-    }
-    static name() {
-      return "Hello!!";
-    }
-  }
-
+var lang = 'fa';
 var num_provinces = 31; 
 var country = []; 
 var iran_lat = 32.637; 
@@ -29,22 +16,21 @@ L.tileLayer('', {
     zoomOffset: 0
 }).addTo(mymap);
 
-function onEachFeature(feature, layer) {
-    // does this feature have a property named popupContent?
-    if (feature.properties && feature.properties.fa) {
-        layer.bindPopup(feature.properties.fa);
+function getMeta(feature, lang) {
+    b = "<b>";
+    sb = "</b>";
+    br = "<br>";
+    if (lang == 'fa') {
+        name = feature["properties"]["fa"];
+        conf = "مبتلایان: ";
     }
+    else {
+        name = feature["properties"]["en"]; 
+        conf = "confirmed";
+    }
+    message = b + name + sb + br + conf + feature["properties"]["cases"].toString(10);
+    return message;
 }
-
-L.geoJSON(geojsonLayer, {
-    style: {"color": "#777777"}, 
-    onEachFeature: onEachFeature
-}).addTo(mymap);
-
-// for (let i = 0; i < num_provinces; i++) {
-//     name = geojsonLayer["features"][i]["name"];
-//     console.log(name);
-// }
 
 center = [
     [34.639944, 50.875942], 
@@ -79,20 +65,39 @@ center = [
     [32.043005, 54.536133], 
     [29.505354, 53.206787], 
 ];
-
 confirmed = [523, 1413, 176, 388, 15, 89, 14, 6, 424, 50, 301, 114, 18, 302, 228, 21, 5, 40, 75, 63, 19, 11, 27, 23, 42, 80, 13, 104, 25, 57, 81];
 
-for (let i = 0; i < num_provinces; i++) {
-    addCircle(center[i], confirmed[i]);
+function onEachFeature(feature, layer) {
+    if (feature.properties) {
+        layer.bindPopup(getMeta(feature, lang));
+    }
 }
 
-function addCircle(center, confirmed) {
-    var cir = L.circle(center, {
+for (let i = 0; i < num_provinces; i++) {
+    geojsonLayer["features"][i]["properties"]["lat"] = center[i][0];
+    geojsonLayer["features"][i]["properties"]["lng"] = center[i][1];
+    geojsonLayer["features"][i]["properties"]["cases"] = confirmed[i];
+}
+
+L.geoJSON(geojsonLayer, {
+    style: {"color": "#777777"},  
+    onEachFeature: onEachFeature
+}).addTo(mymap);
+
+for (let i = 0; i < num_provinces; i++) {
+    addCircle(i, center[i], confirmed[i]);
+}
+
+function addCircle(i) {
+    lat = geojsonLayer["features"][i]["properties"]["lat"]; 
+    lng = geojsonLayer["features"][i]["properties"]["lng"]; 
+    confirmed = geojsonLayer["features"][i]["properties"]["cases"];
+    var cir = L.circle([lat, lng], {
         weight: 2,
         color: '#d9ca29',
         fillColor: '#ffee33', 
         fillOpacity: 0.7,
-        radius: confirmed*75
+        radius: Math.sqrt(confirmed)*1000
     }).addTo(mymap);
-    cir.bindPopup( "مبتلایان: " + String(confirmed));
+    cir.bindPopup(getMeta(geojsonLayer["features"][i], lang));
 }
