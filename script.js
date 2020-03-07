@@ -28,11 +28,11 @@ function getMeta(feature, lang) {
         name = feature["properties"]["en"]; 
         conf = "confirmed";
     }
-    message = b + name + sb + br + conf + feature["properties"]["cases"].toString(10);
+    message = b + name + sb + br + conf + feature["properties"]["cases"].toString();
     return message;
 }
 
-center = [
+var center = [
     [34.639944, 50.875942], 
     [35.500370, 51.806030], 
     [36.088132, 49.854727],
@@ -65,7 +65,7 @@ center = [
     [32.043005, 54.536133], 
     [29.505354, 53.206787], 
 ];
-confirmed = [523, 1413, 176, 388, 15, 89, 14, 6, 424, 50, 301, 114, 18, 302, 228, 21, 5, 40, 75, 63, 19, 11, 27, 23, 42, 80, 13, 104, 25, 57, 81];
+var confirmed = [523, 1413, 176, 388, 15, 89, 14, 6, 424, 50, 301, 114, 18, 302, 228, 21, 5, 40, 75, 63, 19, 11, 27, 23, 42, 80, 13, 104, 25, 57, 81];
 
 function onEachFeature(feature, layer) {
     if (feature.properties) {
@@ -84,20 +84,32 @@ L.geoJSON(geojsonLayer, {
     onEachFeature: onEachFeature
 }).addTo(mymap);
 
+var total_confirmed = 0;
 for (let i = 0; i < num_provinces; i++) {
-    addCircle(i, center[i], confirmed[i]);
+    addCircle(i);
+    total_confirmed += confirmed[i];
 }
 
 function addCircle(i) {
     lat = geojsonLayer["features"][i]["properties"]["lat"]; 
     lng = geojsonLayer["features"][i]["properties"]["lng"]; 
-    confirmed = geojsonLayer["features"][i]["properties"]["cases"];
+    conf = geojsonLayer["features"][i]["properties"]["cases"];
     var cir = L.circle([lat, lng], {
         weight: 2,
         color: '#d9ca29',
         fillColor: '#ffee33', 
         fillOpacity: 0.7,
-        radius: Math.sqrt(confirmed)*1000
+        radius: Math.sqrt(conf)*1000
     }).addTo(mymap);
     cir.bindPopup(getMeta(geojsonLayer["features"][i], lang));
+}
+
+if (lang == 'fa') {
+    document.getElementById("page-title").innerHTML = "نقشه موارد ابتلا به کرونا ویروس کووید-۱۹ در ایران";
+    document.getElementById("page-title").align= "right";
+    document.getElementById("total-confirmed").innerHTML= "کل مبتلایان: " + total_confirmed.toString();
+    document.getElementById("total-confirmed").align = "right";
+}
+else {
+    document.getElementById("total-confirmed").innerHTML= "Confirmed: " + total_confirmed.toString();
 }
