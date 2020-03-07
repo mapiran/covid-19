@@ -65,7 +65,8 @@ var center = [
     [32.043005, 54.536133], 
     [29.505354, 53.206787], 
 ];
-var confirmed = [523, 1413, 176, 388, 15, 89, 14, 6, 424, 50, 301, 114, 18, 302, 228, 21, 5, 40, 75, 63, 19, 11, 27, 23, 42, 80, 13, 104, 25, 57, 81];
+
+var confirmed = [668, 1539, 178, 484, 23, 135, 16, 6, 494, 52, 606, 138, 18, 305, 265, 34, 8, 41, 77, 64, 30, 33, 31, 34, 44, 107, 15, 162, 40, 81, 95];
 
 function onEachFeature(feature, layer) {
     if (feature.properties) {
@@ -85,10 +86,13 @@ L.geoJSON(geojsonLayer, {
 }).addTo(mymap);
 
 var total_confirmed = 0;
+mess = "";
 for (let i = 0; i < num_provinces; i++) {
+    // mess += geojsonLayer["features"][i]["properties"]["cases"] + "\n";
     addCircle(i);
     total_confirmed += confirmed[i];
 }
+// console.log(mess)
 
 function addCircle(i) {
     lat = geojsonLayer["features"][i]["properties"]["lat"]; 
@@ -113,3 +117,32 @@ if (lang == 'fa') {
 else {
     document.getElementById("total-confirmed").innerHTML= "Confirmed: " + total_confirmed.toString();
 }
+
+// chartjs 
+var ctx = document.getElementById('timeChart').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['11/30', '12/01', '12/02', '12/03', '12/04', '12/05', '12/06', '12/07', '12/08', '12/09', '12/10', '12/11', '12/12', '12/13', '12/14', '12/15', '12/16', '12/17'],
+        datasets: [
+            {
+            label: 'تاییدشده',
+            fill: 'false', 
+            backgroundColor: '#ffee33',
+            borderColor: '#d9ca29',
+            data: [2, 5, 18, 28, 43, 61, 95, 141, 245, 388, 593, 978, 1501, 2336, 2922, 3513, 4747, 5823]
+        }, 
+        {
+            label: 'فوتی',
+            fill: 'false', 
+            backgroundColor: '#F93114',
+            borderColor: '#DD321A',
+            data: [2, 2, 4, 5, 8, 12, 15, 22, 26, 38, 43, 54, 66, 77, 92, 107, 124]
+        }]
+    },
+    options: {
+        plugins: {filler: {fill: false}},
+        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+});
+
+
