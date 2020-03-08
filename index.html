@@ -12,22 +12,23 @@
 </head>
 <body>
     <div class="container-fluid">
-        <h1 id="page-title">Map of Iran's COVID-19 Coronavirus Cases</h1>
-        <h2 id="total-confirmed"></h2>
-        <p id="source" align="right"><b>منبع:‌</b> وزارت بهداشت درمان و آموزش پزشکی، ۱۷ اسفند ۱۳۹۸</p> 
+        <h1 id="page-title" align="right">"نقشه‌یِ مواردِ ابتلا به کروناویروسِ کووید-۱۹ در ایران"</h1>
+        <h2 align="right"><span>کلِ مبتلایانِ تاییدی: </span><span class="acc" id="total-confirmed"></span></h2>
     </div>
     <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>نقشه</h3>  
-            <div style="height:600px;" id="mapid"></div>
+            <div style="height:440px" id="mapid"></div>
           </div>
           <div class="col-sm-6">
-            <h3>سری زمانی</h3>
             <canvas id="timeChart"></canvas>
           </div>
         </div>
       </div>
+    <div class="container-fluid">
+        <p id="source" align="right" class="acc"><b>منبع:‌ </b>وزارت بهداشت درمان و آموزش پزشکی</p> 
+        <p align="right"><b>به‌روزرسانی: </b>۱۳۹۸/۱۲/۱۸، ساعت ۱۴:۳۵</p>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

@@ -1,16 +1,20 @@
+const ConvertToArabicNumbers = (num) => {
+    const arabicNumbers = '\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9';
+   return new String(num).replace(/[0123456789]/g, (d)=>{return arabicNumbers[d]});
+  }
+
 var lang = 'fa';
 var num_provinces = 31; 
 var country = []; 
 var iran_lat = 32.637; 
 var iran_lng = 54.272; 
 var default_zoom = 4; 
-var max_zoom = 8;
 var mymap = L.map('mapid').setView([iran_lat, iran_lng], default_zoom);
 mymap.setMaxBounds(mymap.getBounds());
 
 L.tileLayer('', {
   minZoom: default_zoom,
-    maxZoom: max_zoom,
+    maxZoom: default_zoom + 3,
     attribution: '' ,
     tileSize: 32,
     zoomOffset: 0
@@ -66,7 +70,10 @@ var center = [
     [29.505354, 53.206787], 
 ];
 
-var confirmed = [668, 1539, 178, 484, 23, 135, 16, 6, 494, 52, 606, 138, 18, 305, 265, 34, 8, 41, 77, 64, 30, 33, 31, 34, 44, 107, 15, 162, 40, 81, 95];
+var confirmed_1217 = [668, 1539, 178, 484, 23, 135, 16, 6, 494, 52, 606, 138, 18, 305, 265, 34, 8, 41, 77, 64, 30, 33, 31, 34, 44, 107, 15, 162, 40, 81, 95];
+var confirmed_1218 = [685, 1805, 207, 564, 24, 154, 21, 9, 496, 53, 620, 175, 44, 307, 335, 34, 10, 50, 107, 69, 35, 40, 33, 60, 63, 144, 15, 175, 41, 87, 104];
+
+confirmed = confirmed_1218;
 
 function onEachFeature(feature, layer) {
     if (feature.properties) {
@@ -88,11 +95,9 @@ L.geoJSON(geojsonLayer, {
 var total_confirmed = 0;
 mess = "";
 for (let i = 0; i < num_provinces; i++) {
-    // mess += geojsonLayer["features"][i]["properties"]["cases"] + "\n";
     addCircle(i);
     total_confirmed += confirmed[i];
 }
-// console.log(mess)
 
 function addCircle(i) {
     lat = geojsonLayer["features"][i]["properties"]["lat"]; 
@@ -109,9 +114,7 @@ function addCircle(i) {
 }
 
 if (lang == 'fa') {
-    document.getElementById("page-title").innerHTML = "نقشه موارد ابتلا به کرونا ویروس کووید-۱۹ در ایران";
-    document.getElementById("page-title").align= "right";
-    document.getElementById("total-confirmed").innerHTML= "کل مبتلایان: " + total_confirmed.toString();
+    document.getElementById("total-confirmed").innerHTML= ConvertToArabicNumbers(total_confirmed.toString());
     document.getElementById("total-confirmed").align = "right";
 }
 else {
@@ -126,23 +129,26 @@ var chart = new Chart(ctx, {
         labels: ['11/30', '12/01', '12/02', '12/03', '12/04', '12/05', '12/06', '12/07', '12/08', '12/09', '12/10', '12/11', '12/12', '12/13', '12/14', '12/15', '12/16', '12/17'],
         datasets: [
             {
-            label: 'تاییدشده',
+            label: 'تاییدی',
             fill: 'false', 
             backgroundColor: '#ffee33',
             borderColor: '#d9ca29',
-            data: [2, 5, 18, 28, 43, 61, 95, 141, 245, 388, 593, 978, 1501, 2336, 2922, 3513, 4747, 5823]
+            data: [2, 5, 18, 28, 43, 61, 95, 141, 245, 388, 593, 978, 1501, 2336, 2922, 3513, 4747, 5823, 6566]
         }, 
         {
             label: 'فوتی',
             fill: 'false', 
             backgroundColor: '#F93114',
             borderColor: '#DD321A',
-            data: [2, 2, 4, 5, 8, 12, 15, 22, 26, 38, 43, 54, 66, 77, 92, 107, 124]
+            data: [2, 2, 4, 5, 8, 12, 15, 22, 26, 38, 43, 54, 66, 77, 92, 107, 124, 145, 194]
         }]
     },
     options: {
         plugins: {filler: {fill: false}},
-        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}, 
+        scales: {
+            yAxes: [{
+                gridLines: {color: "#FFFFFF"}
+                }]
+            }
 });
-
-
