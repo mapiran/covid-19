@@ -5,7 +5,6 @@ const ConvertToArabicNumbers = (num) => {
 
 var lang = 'fa';
 var num_provinces = 31; 
-var country = []; 
 var iran_lat = 32.637; 
 var iran_lng = 54.272; 
 var default_zoom = 4; 
@@ -14,11 +13,27 @@ mymap.setMaxBounds(mymap.getBounds());
 
 L.tileLayer('', {
   minZoom: default_zoom,
-    maxZoom: default_zoom + 3,
+    maxZoom: default_zoom + 2,
     attribution: '' ,
     tileSize: 32,
     zoomOffset: 0
 }).addTo(mymap);
+
+// load data 
+d3.csv('https://raw.githubusercontent.com/mapiran/covid-19/master/data/behdasht-provincial.csv', function(data){
+    var chart_labels = data.map(function(d) {return d.date});
+    var total_confirmed = data.map(function(d) {return d.Total});
+    var total_death = data.map(function(d) {return d.death});
+    plotChart(chart_labels, total_confirmed, total_death);
+    // add data to map
+    for (i = 0; i < num_provinces; i++) {
+        var name = geojsonLayer["features"][i]["name"];
+        var cases = data.map(function(d) {return d[name]});
+        var today_cases = cases[chart_labels.length - 1]; 
+        // geojsonLayer["features"][i]["properties"]["cases"] = today_cases;
+    }
+    
+});
 
 function getMeta(feature, lang) {
     b = "<b>";
@@ -26,7 +41,7 @@ function getMeta(feature, lang) {
     br = "<br>";
     if (lang == 'fa') {
         name = feature["properties"]["fa"];
-        conf = "مبتلایان: ";
+        conf = "تاییدی: ";
     }
     else {
         name = feature["properties"]["en"]; 
@@ -70,21 +85,17 @@ var center = [
     [29.505354, 53.206787], 
 ];
 
-var confirmed_1217 = [668, 1539, 178, 484, 23, 135, 16, 6, 494, 52, 606, 138, 18, 305, 265, 34, 8, 41, 77, 64, 30, 33, 31, 34, 44, 107, 15, 162, 40, 81, 95];
-var confirmed_1218 = [685, 1805, 207, 564, 24, 154, 21, 9, 496, 53, 620, 175, 44, 307, 335, 34, 10, 50, 107, 69, 35, 40, 33, 60, 63, 144, 15, 175, 41, 87, 104];
-
-confirmed = confirmed_1218;
+confirmed_today = [712,1945,247,601,34,183,26,9,524,68,633,220,37,307,389,34,11,72,129,73,52,69,44,60,66,151,31,175,36,90,133];
+for (let i = 0; i < num_provinces; i++) {
+    geojsonLayer["features"][i]["properties"]["lat"] = center[i][0];
+    geojsonLayer["features"][i]["properties"]["lng"] = center[i][1];
+    geojsonLayer["features"][i]["properties"]["cases"] = confirmed_today[i];
+}
 
 function onEachFeature(feature, layer) {
     if (feature.properties) {
         layer.bindPopup(getMeta(feature, lang));
     }
-}
-
-for (let i = 0; i < num_provinces; i++) {
-    geojsonLayer["features"][i]["properties"]["lat"] = center[i][0];
-    geojsonLayer["features"][i]["properties"]["lng"] = center[i][1];
-    geojsonLayer["features"][i]["properties"]["cases"] = confirmed[i];
 }
 
 L.geoJSON(geojsonLayer, {
@@ -96,13 +107,13 @@ var total_confirmed = 0;
 mess = "";
 for (let i = 0; i < num_provinces; i++) {
     addCircle(i);
-    total_confirmed += confirmed[i];
+    total_confirmed += confirmed_today[i];
 }
 
 function addCircle(i) {
     lat = geojsonLayer["features"][i]["properties"]["lat"]; 
     lng = geojsonLayer["features"][i]["properties"]["lng"]; 
-    conf = geojsonLayer["features"][i]["properties"]["cases"];
+    conf = Number(geojsonLayer["features"][i]["properties"]["cases"]);
     var cir = L.circle([lat, lng], {
         weight: 2,
         color: '#d9ca29',
@@ -121,26 +132,26 @@ else {
     document.getElementById("total-confirmed").innerHTML= "Confirmed: " + total_confirmed.toString();
 }
 
-// chartjs 
-var ctx = document.getElementById('timeChart').getContext('2d');
-var chart = new Chart(ctx, {
+function plotChart(chart_labels, confirmed, death){
+    var ctx = document.getElementById('timeChart').getContext('2d');
+    var chart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['11/30', '12/01', '12/02', '12/03', '12/04', '12/05', '12/06', '12/07', '12/08', '12/09', '12/10', '12/11', '12/12', '12/13', '12/14', '12/15', '12/16', '12/17'],
+        labels: chart_labels,
         datasets: [
             {
             label: 'تاییدی',
             fill: 'false', 
             backgroundColor: '#ffee33',
             borderColor: '#d9ca29',
-            data: [2, 5, 18, 28, 43, 61, 95, 141, 245, 388, 593, 978, 1501, 2336, 2922, 3513, 4747, 5823, 6566]
+            data: confirmed
         }, 
         {
             label: 'فوتی',
             fill: 'false', 
             backgroundColor: '#F93114',
             borderColor: '#DD321A',
-            data: [2, 2, 4, 5, 8, 12, 15, 22, 26, 38, 43, 54, 66, 77, 92, 107, 124, 145, 194]
+            data: death
         }]
     },
     options: {
@@ -152,3 +163,5 @@ var chart = new Chart(ctx, {
                 }]
             }
 });
+}
+
