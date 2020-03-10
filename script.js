@@ -7,129 +7,123 @@ var lang = 'fa';
 var num_provinces = 31; 
 var iran_lat = 32.637; 
 var iran_lng = 54.272; 
-var default_zoom = 4; 
+var default_zoom = 5; 
 var mymap = L.map('mapid').setView([iran_lat, iran_lng], default_zoom);
 mymap.setMaxBounds(mymap.getBounds());
+var geojson; 
 
 L.tileLayer('', {
-  minZoom: default_zoom,
-    maxZoom: default_zoom + 2,
+  minZoom: default_zoom - 1,
+    maxZoom: default_zoom + 1,
     attribution: '' ,
     tileSize: 32,
     zoomOffset: 0
 }).addTo(mymap);
 
-// load data 
-d3.csv('https://raw.githubusercontent.com/mapiran/covid-19/master/data/behdasht-provincial.csv', function(data){
-    var chart_labels = data.map(function(d) {return d.date});
-    var total_confirmed = data.map(function(d) {return d.Total});
-    var total_death = data.map(function(d) {return d.death});
-    plotChart(chart_labels, total_confirmed, total_death);
-    // add data to map
-    for (i = 0; i < num_provinces; i++) {
-        var name = geojsonLayer["features"][i]["name"];
-        var cases = data.map(function(d) {return d[name]});
-        var today_cases = cases[chart_labels.length - 1]; 
-        // geojsonLayer["features"][i]["properties"]["cases"] = today_cases;
-    }
-    
-});
+var geojson_path = 'data/provinces.geojson';
+var data_path = 'data/behdasht-provincial.csv';
+
+function loadData() {
+    var obj = "";
+    d3.json(geojson_path)
+    .then(function(data) {
+        obj = data;
+        loadCovidData(obj); 
+    }).catch(function(error){
+        console.log(error);
+    });
+}
+
+function loadCovidData(obj) {
+    d3.csv(data_path)
+    .then(function(data) {
+        var chart_labels = data.map(function(d) {return d.date});
+        var confirmed = data.map(function(d) {return d.Total});
+        var total_death = data.map(function(d) {return d.death});
+        plotChart(chart_labels, confirmed, total_death);
+        for (let i = 0; i < num_provinces; i++) {
+            var name = obj.features[i].name;
+            var province_confirmed = data.map(function(d) {return d[name]});
+            var today_cases = province_confirmed[province_confirmed.length - 1];
+            obj.features[i].properties.cases = Number(today_cases);
+        }
+        populateMap(obj);
+        populateTotals(confirmed[confirmed.length - 1]);
+    }).catch(function(error){
+        console.log(error);
+    });
+}
 
 function getMeta(feature, lang) {
-    b = "<b>";
-    sb = "</b>";
-    br = "<br>";
+    var b = "<b>";
+    var sb = "</b>";
+    var br = "<br>";
     if (lang == 'fa') {
-        name = feature["properties"]["fa"];
-        conf = "تاییدی: ";
+        var name = feature["properties"]["fa"];
+        var conf = "تاییدی: ";
     }
     else {
-        name = feature["properties"]["en"]; 
-        conf = "confirmed";
+        var name = feature["properties"]["en"]; 
+        var conf = "confirmed: ";
     }
-    message = b + name + sb + br + conf + feature["properties"]["cases"].toString();
+    var message = b + name + sb + br + conf + feature["properties"]["cases"].toString();
     return message;
 }
 
-var center = [
-    [34.639944, 50.875942], 
-    [35.500370, 51.806030], 
-    [36.088132, 49.854727],
-    [32.654628, 51.667983],
-    [37.471035, 57.101319], 
-    [36.029111, 59.106445],
-    [31.961435, 50.845632],
-    [30.843289, 50.778809], 
-    [37.280900, 49.592400], 
-    [36.501819, 48.398819], 
-    [36.226239, 52.531860],
-    [35.225559, 54.434214],
-    [32.517564, 59.104176],
-    [35.996047, 50.928925],
-    [34.612300, 49.854700],
-    [27.529991, 60.582068],
-    [28.923384, 50.820314], 
-    [38.356734, 48.098145], 
-    [37.903573, 46.268211], 
-    [31.436015, 49.041312],
-    [27.447352, 56.359863], 
-    [37.820632, 44.956055],  
-    [34.314167, 47.065000], 
-    [34.937734, 48.559570], 
-    [35.726447, 47.065430], 
-    [33.557418, 48.295898], 
-    [33.227201, 46.691895],
-    [37.280609, 54.975586],  
-    [30.086919, 57.183838], 
-    [32.043005, 54.536133], 
-    [29.505354, 53.206787], 
-];
-
-confirmed_today = [712,1945,247,601,34,183,26,9,524,68,633,220,37,307,389,34,11,72,129,73,52,69,44,60,66,151,31,175,36,90,133];
-for (let i = 0; i < num_provinces; i++) {
-    geojsonLayer["features"][i]["properties"]["lat"] = center[i][0];
-    geojsonLayer["features"][i]["properties"]["lng"] = center[i][1];
-    geojsonLayer["features"][i]["properties"]["cases"] = confirmed_today[i];
-}
-
-function onEachFeature(feature, layer) {
-    if (feature.properties) {
-        layer.bindPopup(getMeta(feature, lang));
+function highlightFeature(e) {
+    var layer = e.target;
+    layer.setStyle({
+        dashArray: '',
+        fillOpacity: 0.3
+    });
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
     }
 }
 
-L.geoJSON(geojsonLayer, {
-    style: {"color": "#777777"},  
-    onEachFeature: onEachFeature
-}).addTo(mymap);
-
-var total_confirmed = 0;
-mess = "";
-for (let i = 0; i < num_provinces; i++) {
-    addCircle(i);
-    total_confirmed += confirmed_today[i];
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
 }
 
-function addCircle(i) {
-    lat = geojsonLayer["features"][i]["properties"]["lat"]; 
-    lng = geojsonLayer["features"][i]["properties"]["lng"]; 
-    conf = Number(geojsonLayer["features"][i]["properties"]["cases"]);
-    var cir = L.circle([lat, lng], {
-        weight: 2,
-        color: '#d9ca29',
-        fillColor: '#ffee33', 
-        fillOpacity: 0.7,
-        radius: Math.sqrt(conf)*1000
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight
+    });
+    layer.bindPopup(getMeta(feature, lang));
+}
+
+function populateMap(obj){
+    geojson = L.geoJSON(obj, {
+        style: {"color": "#777777", "weight": "0.8"},  
+        onEachFeature: onEachFeature
     }).addTo(mymap);
-    cir.bindPopup(getMeta(geojsonLayer["features"][i], lang));
+    for (let i = 0; i < num_provinces; i++) {
+        addCircle(obj.features[i]);
+    }
+} 
+
+function addCircle(feature) {
+    factor = 1000;
+    rad = Math.sqrt(feature.properties.cases)*factor;
+    var cir = L.circle(feature.properties.center, {
+        weight: 1,
+        color: '#910000',
+        fillColor: '#cc0000', 
+        fillOpacity: 0.2,
+        radius: rad
+    }).addTo(mymap);
+    cir.bindPopup(getMeta(feature, lang));
 }
 
-if (lang == 'fa') {
-    document.getElementById("total-confirmed").innerHTML= ConvertToArabicNumbers(total_confirmed.toString());
-    document.getElementById("total-confirmed").align = "right";
-}
-else {
-    document.getElementById("total-confirmed").innerHTML= "Confirmed: " + total_confirmed.toString();
+function populateTotals(confirmed) {
+    if (lang == 'fa') {
+        document.getElementById("total-confirmed").innerHTML= ConvertToArabicNumbers(confirmed.toString());
+        document.getElementById("total-confirmed").align = "right";
+    }
+    else {
+        document.getElementById("total-confirmed").innerHTML= "Confirmed: " + confirmed.toString();
+    }
 }
 
 function plotChart(chart_labels, confirmed, death){
@@ -165,3 +159,4 @@ function plotChart(chart_labels, confirmed, death){
 });
 }
 
+loadData();
