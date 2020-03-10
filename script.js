@@ -127,6 +127,7 @@ function populateTotals(confirmed) {
 }
 
 function plotChart(chart_labels, confirmed, death){
+    var type = 'linear';
     var ctx = document.getElementById('timeChart').getContext('2d');
     var chart = new Chart(ctx, {
     type: 'line',
@@ -157,7 +158,22 @@ function plotChart(chart_labels, confirmed, death){
                 gridLines: {color: "#FFFFFF"}
             }]
         }
-});
+    });
+    chart.canvas.parentNode.style.height = '440px';
+    document.getElementById('logButton').addEventListener('click', function() {
+        type = type === 'linear' ? 'logarithmic' : 'linear';
+        if (type == 'linear'){
+            document.getElementById('logButton').innerHTML = "لگاریتمی";
+        }
+        else {
+            document.getElementById('logButton').innerHTML = "خطی";
+        }
+        chart.options.scales.yAxes[0] = {
+            type: type
+        };
+        chart.update();
+    });
+
 }
 
 loadData();
