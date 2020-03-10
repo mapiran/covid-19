@@ -136,15 +136,15 @@ function plotChart(chart_labels, confirmed, death){
             {
             label: 'تاییدی',
             fill: 'false', 
-            backgroundColor: '#ffee33',
-            borderColor: '#d9ca29',
+            backgroundColor: '#cc0000',
+            borderColor: '#910000',
             data: confirmed
         }, 
         {
             label: 'فوتی',
             fill: 'false', 
-            backgroundColor: '#F93114',
-            borderColor: '#DD321A',
+            backgroundColor: '#DDDDDD',
+            borderColor: '#777777',
             data: death
         }]
     },
@@ -153,9 +153,10 @@ function plotChart(chart_labels, confirmed, death){
         animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}, 
         scales: {
             yAxes: [{
+                type: 'logarithmic', 
                 gridLines: {color: "#FFFFFF"}
-                }]
-            }
+            }]
+        }
 });
 }
 
