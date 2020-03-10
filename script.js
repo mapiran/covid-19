@@ -7,14 +7,14 @@ var lang = 'fa';
 var num_provinces = 31; 
 var iran_lat = 32.637; 
 var iran_lng = 54.272; 
-var default_zoom = 5; 
+var default_zoom = 4; 
 var mymap = L.map('mapid').setView([iran_lat, iran_lng], default_zoom);
 mymap.setMaxBounds(mymap.getBounds());
 var geojson; 
 
 L.tileLayer('', {
-  minZoom: default_zoom - 1,
-    maxZoom: default_zoom + 1,
+  minZoom: default_zoom,
+    maxZoom: default_zoom + 2,
     attribution: '' ,
     tileSize: 32,
     zoomOffset: 0
