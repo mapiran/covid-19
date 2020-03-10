@@ -151,13 +151,7 @@ function plotChart(chart_labels, confirmed, death){
     },
     options: {
         plugins: {filler: {fill: false}},
-        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}, 
-        scales: {
-            yAxes: [{
-                type: 'logarithmic', 
-                gridLines: {color: "#FFFFFF"}
-            }]
-        }
+        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
     });
     chart.canvas.parentNode.style.height = '440px';
     document.getElementById('logButton').addEventListener('click', function() {
