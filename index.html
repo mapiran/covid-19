@@ -19,27 +19,22 @@
 </head>
 <body>
     <div class="container-fluid">
-        <h1 id="page-title" align="right">نقشه‌یِ مواردِ ابتلا به کروناویروسِ کووید-۱۹ در ایران</h1>
-        <h2 align="right"><span>کلِ مبتلایانِ تاییدی: </span><span class="acc" id="total-confirmed"></span></h2>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-6">
-            <div style="height:440px" id="mapid"></div>
-          </div>
-          <div class="col-sm-6">
-            <canvas id="timeChart"></canvas>
-            <div class="text-center">
-                <button id="logButton" type="button" class="btn btn-light" data-toggle="button" aria-pressed="false" autocomplete="off">
-                    لگاریتمی
-                  </button>
+            <div class="row justify-content-center">
+                <div class="col-sm-6">
+                    <h2 id="page-title" align="right">نقشه‌یِ مواردِ ابتلا به کروناویروسِ کووید-۱۹ در ایران</h2>
+                    <h3 align="right"><span>کلِ مبتلایانِ تاییدی: </span><span class="acc" id="total-confirmed"></span></h3>
+                    <div style="height:400px" id="mapid"></div>
+                    <h3 align="right">آمار روزانه</h3>
+                    <canvas id="casesChart" height="200px"></canvas>
+                    <div class="text-right"> 
+                        <button id="logButton" type="button" class="btn btn-secondary btn-sm" data-toggle="button" aria-pressed="false" autocomplete="off">لگاریتمی</button>
+                    </div>
+                    <h3 align="right">نرخ رشد روزانه</h3>
+                    <canvas id="rateChart" height="150px"></canvas>
+                    <p id="source" align="right" class="acc"><b>منبع:‌ </b>وزارت بهداشت درمان و آموزش پزشکی</p> 
+                    <p align="right"><b>به‌روزرسانی: </b>۱۳۹۸/۱۲/۲۱، ساعت ۱۷:۰۲</p>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    <div class="container-fluid">
-        <p id="source" align="right" class="acc"><b>منبع:‌ </b>وزارت بهداشت درمان و آموزش پزشکی</p> 
-        <p align="right"><b>به‌روزرسانی: </b>۱۳۹۸/۱۲/۲۱، ساعت ۱۷:۰۲</p>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -52,4 +47,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-

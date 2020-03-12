@@ -95,7 +95,7 @@ function onEachFeature(feature, layer) {
 
 function populateMap(obj){
     geojson = L.geoJSON(obj, {
-        style: {"color": "#777777", "weight": "0.8"},  
+        style: {"color": "#888888", "weight": "0.3"},  
         onEachFeature: onEachFeature
     }).addTo(mymap);
     for (let i = 0; i < num_provinces; i++) {
@@ -127,33 +127,36 @@ function populateTotals(confirmed) {
 }
 
 function plotChart(chart_labels, confirmed, death){
+    var rate_confirmed = rate(confirmed);
+    var rate_death = rate(death);
     var type = 'linear';
-    var ctx = document.getElementById('timeChart').getContext('2d');
-    var chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: chart_labels,
-        datasets: [
-            {
-            label: 'تاییدی',
-            fill: 'false', 
-            backgroundColor: '#cc0000',
-            borderColor: '#910000',
-            data: confirmed
-        }, 
-        {
-            label: 'فوتی',
-            fill: 'false', 
-            backgroundColor: '#DDDDDD',
-            borderColor: '#777777',
-            data: death
-        }]
-    },
-    options: {
-        plugins: {filler: {fill: false}},
-        animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
-    });
-    chart.canvas.parentNode.style.height = '440px';
+    var ctx_cases = document.getElementById('casesChart').getContext('2d');
+    var ctx_rate = document.getElementById('rateChart').getContext('2d');
+    var chart_cases = new Chart(ctx_cases, {
+        type: 'line',
+        data: {
+            labels: chart_labels,
+            datasets: [ {
+                label: 'تاییدی',
+                fill: 'false', 
+                backgroundColor: '#cc0000',
+                borderColor: '#910000',
+                data: confirmed
+            }, {
+                label: 'فوتی',
+                fill: 'false', 
+                backgroundColor: '#DDDDDD',
+                borderColor: '#777777',
+                data: death
+            }]
+        },
+        options: {
+            legend: {
+                position: 'bottom'
+            }, 
+            plugins: {filler: {fill: false}},
+            animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+        });
     document.getElementById('logButton').addEventListener('click', function() {
         type = type === 'linear' ? 'logarithmic' : 'linear';
         if (type == 'linear'){
@@ -162,12 +165,45 @@ function plotChart(chart_labels, confirmed, death){
         else {
             document.getElementById('logButton').innerHTML = "خطی";
         }
-        chart.options.scales.yAxes[0] = {
+        chart_cases.options.scales.yAxes[0] = {
             type: type
         };
-        chart.update();
+        chart_cases.update();
     });
+    var chart_rate = new Chart(ctx_rate, {
+        type: 'line',
+        data: {
+            labels: chart_labels,
+            datasets: [ {
+                label: '٪ نرخ رشد',
+                fill: 'false', 
+                backgroundColor: '#7d23db',
+                borderColor: '#521691',
+                data: rate_confirmed
+            }]
+        },
+        options: {
+            legend: {
+                display: false
+            }, 
+            plugins: {filler: {fill: false}},
+            animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+        });
+}
 
+function rate(data) {
+    var rate = [];
+    rate.push("");
+    for (let i = 1; i<data.length; i++) {
+        if (data[i-1] != 0) {
+            d = (data[i] - data[i-1])/data[i-1]*100;
+            rate.push(d.toFixed(2));
+        }
+        else {
+            rate.push("");
+        }
+    }
+    return rate;
 }
 
 loadData();
