@@ -175,7 +175,7 @@ function plotChart(chart_labels, confirmed, death){
         data: {
             labels: chart_labels,
             datasets: [ {
-                label: '٪ نرخ رشد',
+                label: '%',
                 fill: 'false', 
                 backgroundColor: '#7d23db',
                 borderColor: '#521691',
@@ -195,8 +195,15 @@ function rate(data) {
     var rate = [];
     rate.push("");
     for (let i = 1; i<data.length; i++) {
-        if (data[i-1] != 0) {
-            d = (data[i] - data[i-1])/data[i-1]*100;
+        var delta_today = data[i] - data[i-1]; 
+        if (i == 1) {
+            var delta_yesterday = data[i-1]; 
+        }
+        else {
+            var delta_yesterday = data[i-1] - data[i-2]; 
+        }
+        if (delta_yesterday != 0) {
+            d = (delta_today/delta_yesterday - 1)*100;
             rate.push(d.toFixed(2));
         }
         else {
