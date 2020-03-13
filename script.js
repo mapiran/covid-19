@@ -39,8 +39,9 @@ function loadCovidData(obj) {
     .then(function(data) {
         var chart_labels = data.map(function(d) {return d.date});
         var confirmed = data.map(function(d) {return d.Total});
-        var total_death = data.map(function(d) {return d.death});
-        plotChart(chart_labels, confirmed, total_death);
+        var death = data.map(function(d) {return d.death});
+        var recovered = data.map(function(d) {return d.reco});
+        plotChart(chart_labels, confirmed, death);
         for (let i = 0; i < num_provinces; i++) {
             var name = obj.features[i].name;
             var province_confirmed = data.map(function(d) {return d[name]});
@@ -48,7 +49,7 @@ function loadCovidData(obj) {
             obj.features[i].properties.cases = Number(today_cases);
         }
         populateMap(obj);
-        populateTotals(confirmed[confirmed.length - 1]);
+        populateTotals(confirmed[confirmed.length - 1], recovered[recovered.length - 1], death[death.length - 1]);
     }).catch(function(error){
         console.log(error);
     });
@@ -116,14 +117,13 @@ function addCircle(feature) {
     cir.bindPopup(getMeta(feature, lang));
 }
 
-function populateTotals(confirmed) {
-    if (lang == 'fa') {
-        document.getElementById("total-confirmed").innerHTML= ConvertToArabicNumbers(confirmed.toString());
-        document.getElementById("total-confirmed").align = "right";
-    }
-    else {
-        document.getElementById("total-confirmed").innerHTML= "Confirmed: " + confirmed.toString();
-    }
+function populateTotals(confirmed, recovered, death) {
+        document.getElementById("confirmed").innerHTML= ConvertToArabicNumbers(confirmed.toString());
+        document.getElementById("recovered").innerHTML= ConvertToArabicNumbers(recovered.toString());
+        document.getElementById("death").innerHTML= ConvertToArabicNumbers(death.toString());
+        document.getElementById("confirmed").align = "right";
+        document.getElementById("recovered").align = "right";
+        document.getElementById("death").align = "right";
 }
 
 function plotChart(chart_labels, confirmed, death){
