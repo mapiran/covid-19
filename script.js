@@ -10,6 +10,7 @@ var iran_lng = 54.272;
 var default_zoom = 4; 
 var mymap = L.map('mapid').setView([iran_lat, iran_lng], default_zoom);
 mymap.setMaxBounds(mymap.getBounds());
+mymap.setZoom(5); 
 var geojson; 
 
 L.tileLayer('', {
