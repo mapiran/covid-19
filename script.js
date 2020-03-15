@@ -62,7 +62,7 @@ function getMeta(feature, lang) {
     var br = "<br>";
     if (lang == 'fa') {
         var name = feature["properties"]["fa"];
-        var conf = "تاییدی: ";
+        var conf = "مبتلایان: ";
     }
     else {
         var name = feature["properties"]["en"]; 
