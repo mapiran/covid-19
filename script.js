@@ -110,8 +110,8 @@ function addCircle(feature) {
     rad = Math.sqrt(feature.properties.cases)*factor;
     var cir = L.circle(feature.properties.center, {
         weight: 1,
-        color: '#910000',
-        fillColor: '#cc0000', 
+        color: 'rgb(21, 127, 251)',
+        fillColor: 'rgb(21, 127, 251)', 
         fillOpacity: 0.2,
         radius: rad
     }).addTo(mymap);
@@ -140,8 +140,8 @@ function plotChart(chart_labels, confirmed, death){
             datasets: [ {
                 label: 'تاییدی',
                 fill: 'false', 
-                backgroundColor: '#cc0000',
-                borderColor: '#910000',
+                backgroundColor: 'rgb(210, 230, 254)',
+                borderColor: 'rgb(21, 127, 251)',
                 data: confirmed
             }, {
                 label: 'فوتی',
@@ -172,14 +172,13 @@ function plotChart(chart_labels, confirmed, death){
         chart_cases.update();
     });
     var chart_rate = new Chart(ctx_rate, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: chart_labels,
             datasets: [ {
-                label: '%',
-                fill: 'false', 
-                backgroundColor: '#7d23db',
-                borderColor: '#521691',
+                label: '%', 
+                backgroundColor: 'rgb(210, 230, 254)',
+                borderColor: 'rgb(21, 127, 251)',
                 data: rate_confirmed
             }]
         },
@@ -190,6 +189,7 @@ function plotChart(chart_labels, confirmed, death){
             plugins: {filler: {fill: false}},
             animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
         });
+        // chart_rate.options.scales.yAxes[0] = {"ticks": {"suggestedMin": -100, "suggestedMax": 100}};
 }
 
 function rate(data) {
