@@ -42,7 +42,7 @@ function loadCovidData(obj) {
         var confirmed = data.map(function(d) {return d.Total});
         var death = data.map(function(d) {return d.death});
         var recovered = data.map(function(d) {return d.reco});
-        plotChart(chart_labels, confirmed, death);
+        plotChart(chart_labels, confirmed, death, recovered);
         for (let i = 0; i < num_provinces; i++) {
             var name = obj.features[i].name;
             var province_confirmed = data.map(function(d) {return d[name]});
@@ -62,7 +62,7 @@ function getMeta(feature, lang) {
     var br = "<br>";
     if (lang == 'fa') {
         var name = feature["properties"]["fa"];
-        var conf = "مبتلایان: ";
+        var conf = "مبتلا: ";
     }
     else {
         var name = feature["properties"]["en"]; 
@@ -127,7 +127,7 @@ function populateTotals(confirmed, recovered, death) {
         document.getElementById("death").align = "right";
 }
 
-function plotChart(chart_labels, confirmed, death){
+function plotChart(chart_labels, confirmed, death, recovered){
     var rate_confirmed = rate(confirmed);
     var rate_death = rate(death);
     var type = 'linear';
@@ -138,11 +138,17 @@ function plotChart(chart_labels, confirmed, death){
         data: {
             labels: chart_labels,
             datasets: [ {
-                label: 'تاییدی',
+                label: 'مبتلا',
                 fill: 'false', 
                 backgroundColor: 'rgb(210, 230, 254)',
                 borderColor: 'rgb(21, 127, 251)',
                 data: confirmed
+            }, {
+                label: 'بهبودی',
+                fill: 'false', 
+                backgroundColor: 'rgb(215, 237, 219)',
+                borderColor: 'rgb(48, 166, 74)',
+                data: recovered
             }, {
                 label: 'فوتی',
                 fill: 'false', 
