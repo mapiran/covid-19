@@ -183,8 +183,8 @@ function plotChart(chart_labels, confirmed, death, recovered){
             labels: chart_labels,
             datasets: [ {
                 label: '%', 
-                backgroundColor: 'rgb(210, 230, 254)',
-                borderColor: 'rgb(21, 127, 251)',
+                backgroundColor: 'rgb(21, 127, 251)',
+                borderColor: 'rgb(210, 230, 254)',
                 data: rate_confirmed
             }]
         },
