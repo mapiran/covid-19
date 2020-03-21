@@ -130,6 +130,7 @@ function populateTotals(confirmed, recovered, death) {
 function plotChart(chart_labels, confirmed, death, recovered){
     var rate_confirmed = rate(confirmed);
     var rate_death = rate(death);
+    var new_confirmed = diff(confirmed);
     var type = 'linear';
     var ctx_cases = document.getElementById('casesChart').getContext('2d');
     var ctx_rate = document.getElementById('rateChart').getContext('2d');
@@ -185,7 +186,7 @@ function plotChart(chart_labels, confirmed, death, recovered){
                 label: '%', 
                 backgroundColor: 'rgb(21, 127, 251)',
                 borderColor: 'rgb(210, 230, 254)',
-                data: rate_confirmed
+                data: new_confirmed
             }]
         },
         options: {
@@ -218,6 +219,19 @@ function rate(data) {
         }
     }
     return rate;
+}
+
+function diff(data) {
+    var diff = [];
+    for (let i = 0; i<data.length; i++) {
+        if (i == 0) {
+            diff.push(data[i]);
+        }
+        else {
+            diff.push(data[i] - data[i-1]);
+        }
+    }
+    return diff;
 }
 
 loadData();
