@@ -42,7 +42,7 @@ function loadCovidData(obj) {
         var confirmed = data.map(function(d) {return d.Total});
         var death = data.map(function(d) {return d.death});
         var recovered = data.map(function(d) {return d.reco});
-        plotChart(chart_labels, confirmed, death, recovered);
+        plotChart(chart_labels, confirmed, death, recovered, obj, data);
         for (let i = 0; i < num_provinces; i++) {
             var name = obj.features[i].name;
             var province_confirmed = data.map(function(d) {return d[name]});
@@ -127,13 +127,14 @@ function populateTotals(confirmed, recovered, death) {
         document.getElementById("death").align = "right";
 }
 
-function plotChart(chart_labels, confirmed, death, recovered){
-    var rate_confirmed = rate(confirmed);
-    var rate_death = rate(death);
+function plotChart(chart_labels, confirmed, death, recovered, obj, data){
     var new_confirmed = diff(confirmed);
+    var new_recovered = diff(recovered);
+    var new_death = diff(death);
     var type = 'linear';
     var ctx_cases = document.getElementById('casesChart').getContext('2d');
     var ctx_rate = document.getElementById('rateChart').getContext('2d');
+    var ctx_province = document.getElementById('provinceChart').getContext('2d');
     var chart_cases = new Chart(ctx_cases, {
         type: 'line',
         data: {
@@ -183,20 +184,46 @@ function plotChart(chart_labels, confirmed, death, recovered){
         data: {
             labels: chart_labels,
             datasets: [ {
-                label: '%', 
+                label: 'مبتلا', 
                 backgroundColor: 'rgb(21, 127, 251)',
                 borderColor: 'rgb(210, 230, 254)',
                 data: new_confirmed
+            }, {
+                label: 'بهبودی', 
+                backgroundColor: 'rgb(48, 166, 74)',
+                borderColor: 'rgb(215, 237, 219)',
+                data: new_recovered
+            }, {
+                label: 'فوتی', 
+                backgroundColor: '#777777',
+                borderColor: '#DDDDDD',
+                data: new_death
             }]
         },
         options: {
             legend: {
-                display: false
+                display: true, 
+                position: 'bottom'
             }, 
             plugins: {filler: {fill: false}},
             animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
         });
-        // chart_rate.options.scales.yAxes[0] = {"ticks": {"suggestedMin": -100, "suggestedMax": 100}};
+        var dset = generate_province_dataset(obj, data);
+        var chart_province = new Chart(ctx_province, {
+            type: 'line',
+            data: {
+                labels: chart_labels,
+                datasets: dset
+            },
+            options: {
+                legend: {
+                    display: false
+                }, 
+                scales: {
+                    yAxes: [{type: 'logarithmic'}]
+                },
+                animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+            });
 }
 
 function rate(data) {
@@ -232,6 +259,23 @@ function diff(data) {
         }
     }
     return diff;
+}
+
+function generate_province_dataset(obj, data) {
+    var sets = [];
+    for (let i=0; i<num_provinces; i++) {
+        var name = obj.features[i].name;
+        var province_confirmed = data.map(function(d) {return d[name]});
+        var dataset = {
+            label: obj.features[i].properties.fa, 
+            fill: 'false', 
+            backgroundColor: 'rgb(210, 230, 254)',
+            borderColor: 'rgb(21, 127, 251)',
+            data: province_confirmed
+        };
+        sets.push(dataset);
+        }
+    return sets;
 }
 
 loadData();
