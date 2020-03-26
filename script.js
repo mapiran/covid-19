@@ -46,7 +46,8 @@ function loadCovidData(obj) {
         for (let i = 0; i < num_provinces; i++) {
             var name = obj.features[i].name;
             var province_confirmed = data.map(function(d) {return d[name]});
-            var today_cases = province_confirmed[province_confirmed.length - 1];
+            // var today_cases = province_confirmed[province_confirmed.length - 1];
+            var today_cases = province_confirmed[32]; // corresponding to 01/03 which is the last day that provincial data are available. 
             obj.features[i].properties.cases = Number(today_cases);
         }
         populateMap(obj);
@@ -134,7 +135,7 @@ function plotChart(chart_labels, confirmed, death, recovered, obj, data){
     var type = 'linear';
     var ctx_cases = document.getElementById('casesChart').getContext('2d');
     var ctx_rate = document.getElementById('rateChart').getContext('2d');
-    var ctx_province = document.getElementById('provinceChart').getContext('2d');
+    // var ctx_province = document.getElementById('provinceChart').getContext('2d');
     var chart_cases = new Chart(ctx_cases, {
         type: 'line',
         data: {
@@ -208,22 +209,22 @@ function plotChart(chart_labels, confirmed, death, recovered, obj, data){
             plugins: {filler: {fill: false}},
             animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
         });
-        var dset = generate_province_dataset(obj, data);
-        var chart_province = new Chart(ctx_province, {
-            type: 'line',
-            data: {
-                labels: chart_labels,
-                datasets: dset
+    /* var dset = generate_province_dataset(obj, data);
+    var chart_province = new Chart(ctx_province, {
+        type: 'line',
+        data: {
+            labels: chart_labels,
+            datasets: dset
+        },
+        options: {
+            legend: {
+                display: false
+            }, 
+            scales: {
+                yAxes: [{type: 'logarithmic'}]
             },
-            options: {
-                legend: {
-                    display: false
-                }, 
-                scales: {
-                    yAxes: [{type: 'logarithmic'}]
-                },
-                animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
-            });
+            animation: {duration: 0}, hover: {animationDuration: 0}, responsiveAnimationDuration: 0}
+        }); */
 }
 
 function rate(data) {
