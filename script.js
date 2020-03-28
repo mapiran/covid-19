@@ -30,6 +30,7 @@ function loadData() {
     .then(function(data) {
         obj = data;
         loadCovidData(obj); 
+        document.getElementById("loading").style.visibility = "hidden";
     }).catch(function(error){
         console.log(error);
     });
