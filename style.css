@@ -7,3 +7,11 @@ body {
     background-color: #FFFFFF;
     color: #333333;
 }
+.footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #EEEEEE;
+    color: #999999;
+    text-align: center;
+  }
