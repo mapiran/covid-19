@@ -43,7 +43,8 @@ function loadCovidData(obj) {
         var confirmed = data.map(function(d) {return d.Total});
         var death = data.map(function(d) {return d.death});
         var recovered = data.map(function(d) {return d.reco});
-        plotChart(chart_labels, confirmed, death, recovered, obj, data);
+        var test = data.map(function(d) {return d.test});
+        plotChart(chart_labels, confirmed, death, recovered, test, obj, data);
         for (let i = 0; i < num_provinces; i++) {
             var name = obj.features[i].name;
             var province_confirmed = data.map(function(d) {return d[name]});
@@ -129,7 +130,7 @@ function populateTotals(confirmed, recovered, death) {
         document.getElementById("death").align = "right";
 }
 
-function plotChart(chart_labels, confirmed, death, recovered, obj, data){
+function plotChart(chart_labels, confirmed, death, recovered, test, obj, data){
     var new_confirmed = diff(confirmed);
     var new_recovered = diff(recovered);
     var new_death = diff(death);
@@ -142,6 +143,14 @@ function plotChart(chart_labels, confirmed, death, recovered, obj, data){
         data: {
             labels: chart_labels,
             datasets: [ {
+                label: 'آزمایش',
+                showLine: false, 
+                hidden: true,
+                fill: 'false', 
+                backgroundColor: 'rgb(245, 200, 66)',
+                borderColor: 'rgb(252, 186, 3)',
+                data: test
+            }, {
                 label: 'مبتلا',
                 fill: 'false', 
                 backgroundColor: 'rgb(210, 230, 254)',
