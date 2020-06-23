@@ -53,7 +53,7 @@ function loadCovidData(obj) {
             obj.features[i].properties.cases = Number(today_cases);
         }
         populateMap(obj);
-        populateTotals(confirmed[confirmed.length - 1], recovered[recovered.length - 1], death[death.length - 1]);
+        populateTotals(confirmed[confirmed.length - 1], recovered[recovered.length - 1], death[death.length - 1], test[test.length - 1]);
     }).catch(function(error){
         console.log(error);
     });
@@ -121,13 +121,15 @@ function addCircle(feature) {
     cir.bindPopup(getMeta(feature, lang));
 }
 
-function populateTotals(confirmed, recovered, death) {
+function populateTotals(confirmed, recovered, death, test) {
         document.getElementById("confirmed").innerHTML= ConvertToArabicNumbers(confirmed.toString());
         document.getElementById("recovered").innerHTML= ConvertToArabicNumbers(recovered.toString());
         document.getElementById("death").innerHTML= ConvertToArabicNumbers(death.toString());
+        document.getElementById("test").innerHTML= ConvertToArabicNumbers(test.toString());
         document.getElementById("confirmed").align = "right";
         document.getElementById("recovered").align = "right";
         document.getElementById("death").align = "right";
+        document.getElementById("test").align = "right";
 }
 
 function plotChart(chart_labels, confirmed, death, recovered, test, obj, data){
